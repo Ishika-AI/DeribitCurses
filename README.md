@@ -1,7 +1,7 @@
 DeribitCurses
 
 
-![image](https://github.com/nuggattiStar/DeribitCurses/img/interface.png)
+![image](https://raw.githubusercontent.com/nuggattiStar/DeribitCurses/master/img/Interface.png)
 
 
 
