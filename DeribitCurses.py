@@ -1,12 +1,12 @@
 from time import sleep
 from deribit_api import RestClient
 import asyncio
-import json
-import websockets, ws
+import ws
 import threading
 import curses
+from curses.textpad import Textbox
 import sys
-from settings import *
+from settings import login, inputs
 from wsdata import *
 import wsdata
 
@@ -17,11 +17,9 @@ else:
     httpcnnct = "https://test.deribit.com"
     wscnt = 'wss://test.deribit.com/ws/api/v1/'
 
-
-
 activeInst = sys.argv[1]
 if(activeInst not in login['instrument']):
-    sys.stderr.write(f'Err accepted instruments : {instrument}\n' )
+    sys.stderr.write(f'Err accepted instruments : {login["instrument"]}\n')
     sys.exit(1)
 
 def ikkenull(x, i):
@@ -39,24 +37,23 @@ def uInput(key, k, var, value):
 def d(event, inst):
     return {
             "id": 5634, 
-            "action": "/api/v1/private/subscribe" ,  
+            "action": "/api/v1/private/subscribe",
             "arguments": {"event": event,
                           "instrument": [inst]}
     }
 
-client = RestClient(login['Key'],login['Secret'], httpcnnct)
+client = RestClient(login['Key'], login['Secret'], httpcnnct)
 
 
 def run():
 
-    
     wsdata.orders = client.getopenorders(activeInst)
     
     t = threading.Thread(target=asyncio.run, args=(ws.connect(wscnt, client, d(["order_book", "user_order", "trade"], activeInst)), ))
 
     t.daemon = True
     t.start()
-        
+
     def main(stdscr, running):
         
         stdscr.clear()
@@ -77,7 +74,19 @@ def run():
         tpos = 0
         trcounter = []
         account = client.account()
-        
+
+
+        def timedinput(stdscr):
+
+            inputwin = stdscr.derwin(height, width, 10, begin_x)
+
+            # inputwin.box()
+            tbox = Textbox(inputwin)
+            tbox.edit()
+            wsdata.inputstr = tbox.gather()
+            inputwin.erase()
+            wsdata.inputstr.strip() 
+            return
 
 
         for i in range(0, curses.COLORS):
@@ -96,30 +105,32 @@ def run():
             if(oldScreenSize != screensize):  
                 stdscr.erase()
             key = stdscr.getch()
-            poswinWidth= screensize[1] - screensize[1] // 4
+            poswinWidth = screensize[1] - screensize[1] // 4
             tradewinWidth = screensize[1] - screensize[1] // 4 - 40
             priswin = stdscr.derwin(height, width, begin_y, begin_x)
-            ordwin = stdscr.derwin(screensize[0], screensize[1] // 4, 0, screensize[1]- screensize[1] // 4)
+            
+            ordwin = stdscr.derwin(screensize[0], screensize[1] // 4, 0, screensize[1] - screensize[1] // 4)
             tradewin = stdscr.derwin(screensize[0] - 10, tradewinWidth, 0, 40)
             posWin = stdscr.derwin(10,  poswinWidth, screensize[0] - 10, 0)
-        
             posWin.box()
-            priswin.box()
+            
             hh = 1
             y = 0
             wsAlive = t.isAlive()           
-           
 
-            #set orderice and contracts
+            #set ordeprice and contracts
             ticksaway = uInput(key, inputs['closerToMarket'], ticksaway, -1)
             ticksaway = uInput(key, inputs['furtherFromMarket'], ticksaway, 1)
             quantity = uInput(key, inputs['lessCorntracts'], quantity, -1)  
             quantity = uInput(key, inputs['moreCorntracts'], quantity, 1)  
 
+            if(key == ord('i')):
+                t2 = threading.Thread(target=timedinput, args=[stdscr])
+                t2.start()
+
             if(key == ord(inputs['cancelAll'])):
                client.cancelall('all') 
                ordwin.erase()
-            
            
             if(ticksaway == 0):
                 post = False
@@ -127,8 +138,6 @@ def run():
                 post = True
             ticksaway = ikkenull(ticksaway, 0)
             quantity = ikkenull(quantity, 1)
-
-
 
             if(key == ord(inputs['buy'])):
                 buy = client.buy(instrument=activeInst,quantity=quantity,price=priceinfo['bestBid'] - ticksaway ,postOnly=post)
@@ -148,7 +157,10 @@ def run():
                 ordwin.addstr(2, 10, 'Nih!')
 
             try:
+                priswin.erase()
+                priswin.box()
                 priswin.addstr(1 , 1, activeInst)
+                priswin.addstr(6 ,10 , str(wsdata.inputstr))
                 priswin.addstr(6 ,1 ,str(wsAlive))
                 priswin.addstr(2 ,1 ,str(priceinfo['bestAsk']), curses.color_pair(2))
                 priswin.addstr(4 ,1,str(priceinfo['bestBid']), curses.color_pair(3))

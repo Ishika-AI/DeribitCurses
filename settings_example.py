@@ -1,9 +1,11 @@
 ##################Settings##################
 
 login = dict(
-	Testnet = True,	
+	Testnet = True,	##only change if you are feeling brave
 	Key = "",
-	Secret = ""
+	Secret = "",
+        instrument = ["BTC-PERPETUAL", "BTC-28JUN19", "ETH-PERPETUAL"]
+
 )
 
 inputs = dict(

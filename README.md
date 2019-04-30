@@ -31,6 +31,16 @@ Can be installed with pipenv.
 
 Add api key and secret in settings_example.py and rename/copy with to settings.py
 
+Defaults to Testnet at test.deribit.com,
+
 Run with DeribitCurses.py BTC-PERPETUAL
 
 More instruments can be added in settings.py
+
+
+#### TODO
+  *  Fix websocket connection
+  *  ordercancellation per order
+  *  stops
+  *  bulk orders maaybe
+  *  set TIF on orders
