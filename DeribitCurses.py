@@ -5,13 +5,13 @@ import ws
 import threading
 import curses
 from curses.textpad import Textbox
-import sys
+from sys import argv
 from settings import login, inputs, wscnt, httpcnnct, client
 from wsdata import *
 import wsdata
 from viInput import inputcheck
 
-activeInst = sys.argv[1]
+activeInst = argv[1]
 if(activeInst not in login['instrument']):
     sys.stderr.write(f'Err accepted instruments : {login["instrument"]}\n')
     sys.exit(1)
@@ -123,7 +123,7 @@ def run():
             quantity = uInput(key, inputs['lessCorntracts'], quantity, -1)  
             quantity = uInput(key, inputs['moreCorntracts'], quantity, 1)  
 
-            if(key == ord('i')):
+            if(key == ord(inputs['vimMode'])):
                 t2 = threading.Thread(target=timedinput, args=[stdscr])
                 t2.start()
 

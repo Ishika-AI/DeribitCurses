@@ -9,6 +9,8 @@
 
 It's still a bit rough around the edges and missing alot of functionality.
 What's working at the moment is buying, selling and cancellation of all orders.
+There is also a very basic vim like input mode.
+Accepted commands are mb/s[price] pb/s[price] at the moment.
 
 ####	Standard input. 
 * b : buy 
@@ -16,16 +18,21 @@ What's working at the moment is buying, selling and cancellation of all orders.
 * k : move buySell away from index price 
 * j : move buySell towards index price 
 * c : cancel all orders 
+* o : enter vim mode
+* CTRL G : accept input from vim mode
+
+
 
 Keys can be changed in settings.py
 
+
+
 #### Installation instructions
 
-NB! only works in linux as far as i know...
+NB! only works in linux
 
-Depends on deribit_api, websockets and curses
+Dependencies : deribit_api, websockets 
 
-Can be installed with pipenv.
 
 #### Start app 
 

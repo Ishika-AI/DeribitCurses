@@ -17,7 +17,8 @@ inputs = dict(
         furtherFromMarket = 'k',
         cancelAll = 'c',
         moreCorntracts = 'l',
-        lessCorntracts = 'h'
+        lessCorntracts = 'h',
+        vimMode = 'o'
         # osv.....
 )
 
