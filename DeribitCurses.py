@@ -6,16 +6,10 @@ import threading
 import curses
 from curses.textpad import Textbox
 import sys
-from settings import login, inputs
+from settings import login, inputs, wscnt, httpcnnct, client
 from wsdata import *
 import wsdata
-
-if login['Testnet']:
-    httpcnnct = "https://test.deribit.com"
-    wscnt = 'wss://test.deribit.com/ws/api/v1/'
-else:
-    httpcnnct = "https://test.deribit.com"
-    wscnt = 'wss://test.deribit.com/ws/api/v1/'
+from viInput import inputcheck
 
 activeInst = sys.argv[1]
 if(activeInst not in login['instrument']):
@@ -42,7 +36,8 @@ def d(event, inst):
                           "instrument": [inst]}
     }
 
-client = RestClient(login['Key'], login['Secret'], httpcnnct)
+# client = RestClient(login['Key'], login['Secret'], httpcnnct)
+
 
 
 def run():
@@ -80,12 +75,16 @@ def run():
 
             inputwin = stdscr.derwin(height, width, 10, begin_x)
 
-            # inputwin.box()
             tbox = Textbox(inputwin)
+            
             tbox.edit()
-            wsdata.inputstr = tbox.gather()
+            k = tbox.gather()
+            wsdata.inputstr = k.rstrip()
             inputwin.erase()
-            wsdata.inputstr.strip() 
+            
+
+            inputcheck(wsdata.inputstr, activeInst, client) 
+
             return
 
 
@@ -127,6 +126,7 @@ def run():
             if(key == ord('i')):
                 t2 = threading.Thread(target=timedinput, args=[stdscr])
                 t2.start()
+
 
             if(key == ord(inputs['cancelAll'])):
                client.cancelall('all') 

@@ -1,4 +1,6 @@
-##################Settings##################
+##################Settings unt setup #################
+from deribit_api import RestClient
+
 
 login = dict(
 	Testnet = True,	##only change if you are feeling brave
@@ -18,3 +20,15 @@ inputs = dict(
         lessCorntracts = 'h'
         # osv.....
 )
+
+
+if login['Testnet']:
+    httpcnnct = "https://test.deribit.com"
+    wscnt = 'wss://test.deribit.com/ws/api/v1/'
+else:
+    httpcnnct = "https://test.deribit.com"
+    wscnt = 'wss://test.deribit.com/ws/api/v1/'
+
+
+client = RestClient(login['Key'], login['Secret'], httpcnnct)
+
