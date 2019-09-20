@@ -55,8 +55,8 @@ auth = {
         "method" : "public/auth",
         "params" : {
             "grant_type" : "client_credentials",
-            "client_id" : "A7fcDnN2rqkb",
-            "client_secret" : "RVAIJ6Y3CQ6ZWONAB5X52OMXQWUALFTZ"}
+            "client_id" : "",
+            "client_secret" : ""}
     }
 
 def sub(activeInst, *token):
